@@ -7,10 +7,13 @@ namespace Day1._2.csharp
     {
         static void Main(string[] args)
         {
+            var stopWatch = new System.Diagnostics.Stopwatch();
+            stopWatch.Start();
             var lines = System.IO.File.ReadAllLines("input.txt");
 
             var res = Calculate(lines);
-            Console.WriteLine(res);
+            stopWatch.Stop();
+            Console.WriteLine(stopWatch.ElapsedMilliseconds);
         }
 
         static int Calculate(string[] lines)
