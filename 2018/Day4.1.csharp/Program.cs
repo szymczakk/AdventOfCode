@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Resources;
 
 namespace Day4._1.csharp
 {
@@ -21,8 +22,10 @@ namespace Day4._1.csharp
         {
             var orderedDictionary = ParseToOrderedDictionary(input);
             var infoAboutGuards = ParseInfoForEachGuard(orderedDictionary);
-            var sleepHead = infoAboutGuards.Select(pair => pair.Value).OrderBy(guard => guard.SleepTime).First();
-            return sleepHead.Id * sleepHead.SleepTime.Minutes;
+            var sleepHead = infoAboutGuards.Select(pair => pair.Value).OrderByDescending(guard => guard.SleepTime).First();
+            var mostOccuringMinute =
+                sleepHead.SleepMinutes.GroupBy(i => i).OrderByDescending(grp => grp.Count()).Select(k => k.Key).First();
+            return sleepHead.Id * mostOccuringMinute;
         }
 
         public Dictionary<DateTime, string> ParseToOrderedDictionary(string[] input)
@@ -36,15 +39,78 @@ namespace Day4._1.csharp
         {
             var result = new Dictionary<int, Guard>();
 
-            var guardStartDate = dict.Where(pair => pair.Value.Contains('#'));
+            Guard guard = null;
+            DateTime? guardFallAsleepTime = null;
+            DateTime? guardWakeUpTime = null;
+            foreach (var row in dict)
+            {
+                if (row.Value.Contains('#'))
+                {
+                    guard = GetGuard(row, result);
+                }
+                if (guard != null)
+                {
+                    if (row.Value.Contains("falls"))
+                    {
+                        guardFallAsleepTime = row.Key;
+                    }
+
+                    if (row.Value.Contains("wakes"))
+                    {
+                        guardWakeUpTime = row.Key;
+                    }
+
+                    if (guardFallAsleepTime != null && guardWakeUpTime != null)
+                    {
+                        guard.SleepTime += (guardWakeUpTime.Value - guardFallAsleepTime.Value);
+                        if (guardFallAsleepTime.Value.Minute > guardWakeUpTime.Value.Minute - 1)
+                        {
+                            guard.SleepMinutes.AddRange(Enumerable.Range(guardFallAsleepTime.Value.Minute, 60 - guardFallAsleepTime.Value.Minute));
+                            guard.SleepMinutes.AddRange(Enumerable.Range(1, guardWakeUpTime.Value.Minute));
+                        }
+                        else
+                        {
+                            guard.SleepMinutes.AddRange(Enumerable.Range(guardFallAsleepTime.Value.Minute, guardWakeUpTime.Value.Minute - guardFallAsleepTime.Value.Minute));
+                        }
+                        guardWakeUpTime = null;
+                        guardFallAsleepTime = null;
+                    }
+                }
+            }
 
             return result;
+        }
+
+        private Guard GetGuard(KeyValuePair<DateTime, string> input, Dictionary<int, Guard> infos)
+        {
+            var guardId = GetGuardId(input.Value);
+            if (infos.ContainsKey(guardId))
+            {
+                return infos[guardId];
+            }
+
+            var guard = new Guard()
+            {
+                Id = guardId
+            };
+            infos.Add(guardId, guard);
+            return guard;
+        }
+
+        private int GetGuardId(string input)
+        {
+            return int.Parse(input.Split(' ').First(el => el.StartsWith("#")).Substring(1));
         }
     }
 
     public class Guard
     {
+        public Guard()
+        {
+            SleepMinutes = new List<int>();
+        }
         public int Id { get; set; }
         public TimeSpan SleepTime{ get; set; }
+        public List<int> SleepMinutes { get; set; }
     }
 }
