@@ -11,8 +11,10 @@ namespace Day4._1.csharp
         {
             var lines = System.IO.File.ReadAllLines("input.txt");
             var w = new Worker();
-            var result = w.GetMostTimeAsleep(lines);
-            Console.WriteLine(result);
+            var result1 = w.GetMostTimeAsleep(lines);
+            var result2 = w.SecondMethod(lines);
+            Console.WriteLine(result1);
+            Console.WriteLine(result2);
         }
     }
 
@@ -22,10 +24,28 @@ namespace Day4._1.csharp
         {
             var orderedDictionary = ParseToOrderedDictionary(input);
             var infoAboutGuards = ParseInfoForEachGuard(orderedDictionary);
+
             var sleepHead = infoAboutGuards.Select(pair => pair.Value).OrderByDescending(guard => guard.SleepTime).First();
             var mostOccuringMinute =
                 sleepHead.SleepMinutes.GroupBy(i => i).OrderByDescending(grp => grp.Count()).Select(k => k.Key).First();
             return sleepHead.Id * mostOccuringMinute;
+        }
+
+        public int SecondMethod(string[] input)
+        {
+            var orderedDictionary = ParseToOrderedDictionary(input);
+            var infoAboutGuards = ParseInfoForEachGuard(orderedDictionary);
+
+            var mostOccuringMinutes = infoAboutGuards.Select(pair => pair.Value).Select(g => new
+            {
+                Id = g.Id,
+                MostOccuringMinute = g.SleepMinutes.GroupBy(i => i).OrderByDescending(grp => grp.Count())
+                    .Select(k => k.Key).FirstOrDefault()
+            });
+
+            var result = mostOccuringMinutes.OrderByDescending(e => e.MostOccuringMinute).First();
+
+            return result.Id * result.MostOccuringMinute;
         }
 
         public Dictionary<DateTime, string> ParseToOrderedDictionary(string[] input)
