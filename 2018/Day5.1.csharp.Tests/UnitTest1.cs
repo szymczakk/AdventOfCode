@@ -10,6 +10,7 @@ namespace Day5._1.csharp.Tests
         private readonly string _testCase3 = "abAB";
         private readonly string _testCase4 = "aabAAB";
         private readonly string _testCase5 = "dabAcCaCBAcCcaDA";
+        private readonly string _testCase6 = "abcdefghHGFEDCBA";
 
         [TestMethod]
         public void TestPolymer1()
@@ -49,6 +50,14 @@ namespace Day5._1.csharp.Tests
             var w = new Worker();
             var result = w.ReactPolymerAndGetUnits(_testCase5);
             Assert.AreEqual(10, result);
+        }
+
+        [TestMethod]
+        public void TestPolymer6()
+        {
+            var w = new Worker();
+            var result = w.ReactPolymerAndGetUnits(_testCase6);
+            Assert.AreEqual(0, result);
         }
     }
 }

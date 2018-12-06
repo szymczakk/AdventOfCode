@@ -6,4 +6,14 @@
     <RootNamespace>Day5._1.csharp</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="input.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="input.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
