@@ -42,12 +42,12 @@ namespace Day6._1.csharp
                 }
             }
 
-            points = RemoveInfinitePoints(points);
+            points = RemoveInfinitePoints(points, area);
 
             return points.Max(p => p.Size);
         }
 
-        private List<Point> RemoveInfinitePoints(List<Point> points)
+        private List<Point> RemoveInfinitePoints(List<Point> points, Point[, ] area)
         {
             var minX = points.Min(p => p.X);
             var maxX = points.Max(p => p.X);
@@ -55,17 +55,27 @@ namespace Day6._1.csharp
             var minY = points.Min(p => p.Y);
             var maxY = points.Max(p => p.Y);
 
-            points.RemoveAll(p => p.X == minX);
-            points.RemoveAll(p => p.X == maxX);
-            points.RemoveAll(p => p.Y == minY);
-            points.RemoveAll(p => p.Y == maxY);
+            var pointToRemove = new List<Point>();
 
+            for (int x = minX; x < maxX; x++)
+            {
+                if (area[x, minY] != null) pointToRemove.Add(area[x, minY]);
+                if(area[x, maxY - 1] != null) pointToRemove.Add(area[x, maxY-1]);
+            }
+
+            for (int y = minY; y < maxY; y++)
+            {
+                if(area[minX, y] != null) pointToRemove.Add(area[minX, y]);
+                if(area[maxX - 1, y] != null) pointToRemove.Add(area[maxX-1, y]);
+            }
+
+            points.RemoveAll(p => pointToRemove.Distinct().Any(pt => pt.Id == p.Id));
             return points;
         }
 
         public IEnumerable<Point> ParseLinesToPoints(string[] lines)
         {
-            return lines.Select(l => l.Split(", ")).Select(el => new Point() {X = int.Parse(el[0]), Y = int.Parse(el[1])});
+            return lines.Select(l => l.Split(", ")).Select(el => new Point() {X = int.Parse(el[0]), Y = int.Parse(el[1]), Id = Guid.NewGuid()});
         }
 
         public (int x, int y) GetAreaSize(IEnumerable<Point> points)
@@ -84,6 +94,7 @@ namespace Day6._1.csharp
 
     public class Point
     {
+        public Guid Id { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
         public int Size { get; set; }
