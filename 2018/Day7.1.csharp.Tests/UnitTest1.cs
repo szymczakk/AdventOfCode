@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Resources;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Day7._1.csharp.Tests
@@ -22,7 +23,7 @@ namespace Day7._1.csharp.Tests
         {
             var w = new Worker();
             var result = w.OrderInstruction(_testCase);
-            Assert.AreEqual("CABDFE", _testCase);
+            Assert.AreEqual("CABDFE", result);
         }
 
         [TestMethod]
@@ -30,10 +31,7 @@ namespace Day7._1.csharp.Tests
         {
             var w = new Worker();
             var result = w.ParseInput(_testCase);
-
-            Assert.IsTrue(result.First().Value.Contains("F"));
-            Assert.IsTrue(result.First().Value.Contains("A"));
-            Assert.AreEqual(2, result.First().Value.Count);
+            Assert.AreEqual(6, result.Count);
         }
     }
 }
