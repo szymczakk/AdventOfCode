@@ -9,7 +9,7 @@ namespace Day9._1.csharp
         static void Main(string[] args)
         {
             var w = new W();
-            var result = w.GetWinningScore(465, 71498);
+            var result = w.GetWinningScore(465, 7149800);
 
             Console.WriteLine(result);
         }
@@ -17,26 +17,25 @@ namespace Day9._1.csharp
 
     public class W
     {
-        public (int winningScore, string gameboard) GetWinningScore(int playerAmout, int marbleAmount)
+        public (long winningScore, string gameboard) GetWinningScore(int playerAmount, int marbleAmount)
         {
-            var gameList = new List<int>(){0, 1};
-            var scores = new int[playerAmout];
+            var gameList = new List<int>(marbleAmount){0, 1};
+            var scores = new long[playerAmount];
 
             var insertAt = 1;
             for (var i = 2; i <= marbleAmount; i++)
             {
                 if (i % 23 == 0)
                 {
-                    scores[i % playerAmout] += i;
+                    scores[i % playerAmount] += i;
 
-                    //var additionalPointsIndex = (insertAt + (gameList.Count - 7) )%gameList.Count;
                     var additionalPointsIndex = insertAt - 7;
                     if (additionalPointsIndex < 0)
                     {
                         additionalPointsIndex = gameList.Count + additionalPointsIndex;
                     }
 
-                    scores[i % playerAmout] += gameList[additionalPointsIndex];
+                    scores[i % playerAmount] += gameList[additionalPointsIndex];
                     gameList.RemoveAt(additionalPointsIndex);
                     insertAt = additionalPointsIndex;
                 }
@@ -53,7 +52,7 @@ namespace Day9._1.csharp
                 }
             }
 
-            return (scores.Max(), string.Join(' ', gameList));
+            return (scores.Max(), "" ); // string.Join(' ', gameList));
         }
     }
 }
