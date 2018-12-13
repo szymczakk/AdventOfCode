@@ -7,12 +7,19 @@ namespace Day12._1.csharp
 {
     class Program
     {
+        private static readonly int[] falseResults1 = new[] { 7394 };
         static void Main(string[] args)
         {
             var input = System.IO.File.ReadAllLines("input.txt");
             var w = new W();
             var parsed = w.ParseInput(input);
-            var result = w.CalculateAmoutnOfPlantsAfterGeneration(parsed.Item1, parsed.Item2, 20);
+            var result = w.CalculateAmoutnOfPlantsAfterGeneration(parsed.Item1, parsed.Item2, 20); //3494
+
+            if (falseResults1.Any(fr => fr == result))
+            {
+                return;
+            }
+
             Console.WriteLine(result);
             Console.ReadLine();
         }
@@ -34,9 +41,14 @@ namespace Day12._1.csharp
 
             var sum = 0;
 
-            foreach (var generationLine in results)
+            var generationLine = results.Last();
+
+            for (var i = 0; i < generationLine.Length; i++)
             {
-                sum += generationLine.Sum();
+                if (generationLine[i] == 1)
+                {
+                    sum += i - (initialState.Length/3);
+                }
             }
 
             return sum;
@@ -53,10 +65,10 @@ namespace Day12._1.csharp
         {
             var result = new List<int>
             {
-                state[0], state[1]
+                0, 0
             };
 
-            for (var i = 0; i < state.Length; i++)
+            for (var i = 0; i < state.Length - 2; i++)
             {
                 var toApply = true;
                 foreach (var rule in rules)

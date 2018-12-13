@@ -32,7 +32,11 @@ namespace Day12._1.csharp.Tests
         {
             var w = new W();
             var parsed = w.ParseInput(_testCase);
+
             var result = w.CalculateAmoutnOfPlantsAfterGeneration(parsed.Item1, parsed.Item2, 20);
+
+            Assert.AreEqual(145, w.CalculateAmoutnOfPlantsAfterGeneration(parsed.Item1, parsed.Item2, 0));
+            Assert.AreEqual(91, w.CalculateAmoutnOfPlantsAfterGeneration(parsed.Item1, parsed.Item2, 1));
 
             Assert.AreEqual(325, result);
         }
@@ -83,7 +87,7 @@ namespace Day12._1.csharp.Tests
             Assert.AreEqual(1, result[40]);
             Assert.AreEqual(1, result[43]);
 
-            Assert.AreEqual("0001000100001000001001001001", string.Join("", result.Skip(22).Take(28)));
+            Assert.IsTrue(string.Join("", result).Contains("0001000100001000001001001001"));
         }
     }
 }
