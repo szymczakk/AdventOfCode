@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection.Metadata;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -42,21 +43,34 @@ namespace Day12._1.csharp.Tests
         }
 
         [TestMethod]
+        public void TestCalculateAmoutnOfPlantsAfterGeneration2()
+        {
+            var w = new W();
+            var parsed = w.ParseInput(_testCase);
+
+            var result = w.CalculateAmoutnOfPlantsAfterGeneration(parsed.Item1, parsed.Item2, 20);
+
+            Assert.AreEqual(145, w.CalculateAmoutnOfPlantsAfterGeneration(parsed.Item1, parsed.Item2, 0));
+            Assert.AreEqual(91, w.CalculateAmoutnOfPlantsAfterGeneration(parsed.Item1, parsed.Item2, 1));
+
+            Assert.AreEqual(325, result);
+        }
+
+        [TestMethod]
         public void TestParseInputInitialState()
         {
             var w = new W();
             
             var parsed = w.ParseInput(_testCase);
 
-            Assert.AreEqual(75, parsed.Item1.Length);
+            Assert.AreEqual(25, parsed.Item1.Count);
 
-            Assert.AreEqual(1, parsed.Item1[parsed.Item1.Length / 3 + 0]);
-            Assert.AreEqual(0, parsed.Item1[parsed.Item1.Length / 3 + 1]);
-            Assert.AreEqual(0, parsed.Item1[parsed.Item1.Length / 3 + 2]);
-            Assert.AreEqual(1, parsed.Item1[parsed.Item1.Length / 3 + 3]);
-            Assert.AreEqual(0, parsed.Item1[parsed.Item1.Length / 3 + 4]);
-            Assert.AreEqual(1, parsed.Item1[parsed.Item1.Length / 3 + 24]);
-
+            Assert.IsTrue(parsed.initialState.Single(p => p.Index == 0).HasPlant);
+            Assert.IsFalse(parsed.initialState.Single(p => p.Index == 1).HasPlant);
+            Assert.IsFalse(parsed.initialState.Single(p => p.Index == 2).HasPlant);
+            Assert.IsTrue(parsed.initialState.Single(p => p.Index == 3).HasPlant);
+            Assert.IsFalse(parsed.initialState.Single(p => p.Index == 4).HasPlant);
+            Assert.IsTrue(parsed.initialState.Single(p => p.Index == 24).HasPlant);
         }
 
         [TestMethod]
