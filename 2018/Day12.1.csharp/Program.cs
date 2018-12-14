@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Day12._1.csharp
 {
@@ -34,56 +35,23 @@ namespace Day12._1.csharp
     {
         public int CalculateAmoutnOfPlantsAfterGeneration(List<Plant> initialState, Rule[] rules, long generationNo)
         {
-            var sum = 0;
-            //int[] currentGeneration = initialState;
+            List<Plant> currentGeneration = initialState;
 
-            //for (long i = 1; i < generationNo + 1; i++)
-            //{
-            //    currentGeneration = (GetNextGeneration(currentGeneration, rules));
-            //    if (currentGeneration.All(p => p == 0))
-            //    {
-            //        return 0;
-            //    }
-            //}
+            for (long i = 1; i < generationNo + 1; i++)
+            {
+                currentGeneration = (GetNextGeneration(currentGeneration, rules));
+                if (currentGeneration.All(p => !p.HasPlant))
+                {
+                    return 0;
+                }
+            }
 
-            
-
-            //for (var i = 0; i < currentGeneration.Length; i++)
-            //{
-            //    if (currentGeneration[i] == 1)
-            //    {
-            //        sum += i - (initialState.Length / 3);
-            //    }
-            //}
-
-            return sum;
+            return currentGeneration.Where(p => p.HasPlant).Sum(p => p.Index);
         }
-        public int CalculateAmoutnOfPlantsAfterGeneration(int[] initialState, Rule[] rules, int generationNo)
+
+        public int CalculateAmoutnOfPlantsAfterGeneration(List<Plant> initialState, Rule[] rules, int generationNo)
         {
-            var sum = 0;
-
-            //var results = new List<int[]>(generationNo)
-            //{
-            //    initialState
-            //};
-
-            //for (int i = 1; i < generationNo + 1; i++)
-            //{
-            //    results.Add(GetNextGeneration(results[i - 1], rules));
-            //}
-
-
-            //var generationLine = results.Last();
-
-            //for (var i = 0; i < generationLine.Length; i++)
-            //{
-            //    if (generationLine[i] == 1)
-            //    {
-            //        sum += i - (initialState.Length/3);
-            //    }
-            //}
-
-            return sum;
+            return CalculateAmoutnOfPlantsAfterGeneration(initialState, rules, (long) generationNo);
         }
 
         public (List<Plant> initialState, Rule[] rules) ParseInput(string[] input)
@@ -97,49 +65,68 @@ namespace Day12._1.csharp
         {
             var result = new List<Plant>();
 
-            foreach (var s in state)
+            var startIndex = state.First(p => p.HasPlant);
+            
+            for (int i = startIndex.Index - 4; i < state.Count; i++)
             {
-                var workingIndex = s.Index;
+                var tempState = new List<Plant>(5);
+
+                if (i < 0)
+                {
+                    for (int q = i; q < 0; q++)
+                    {
+                        tempState.Add(new Plant()
+                        {
+                            HasPlant = false,
+                            Index = q
+                        });
+                    }
+                }
+
+                var toAdd = 5 - tempState.Count;
+
+                tempState.AddRange(state.Where(p => p.Index >= startIndex.Index).Skip(i).Take(toAdd));
+
+                toAdd = 5 - tempState.Count;
+                for (int q = 0; q < toAdd; q++)
+                {
+                    tempState.Add(new Plant()
+                    {
+                        HasPlant = false,
+                        Index = state.Count + q
+                    });
+                }
+                var passedRule = true;
                 foreach (var rule in rules)
                 {
-                    
+                    passedRule = true;
+                    for (int j = 0; j < 5; j++)
+                    {
+                        if ((rule.Sequence[j] == 1) != tempState[j].HasPlant)
+                        {
+                            passedRule = false;
+                            break;
+                        }
+                    }
+                    if (passedRule)
+                    {
+                        result.Add(new Plant()
+                        {
+                            Index = i + 2,
+                            HasPlant = (rule.Result == 1)
+                        });
+                        break;
+                    }
+                }
+                if (!passedRule)
+                {
+                    result.Add(new Plant()
+                    {
+                        HasPlant = false,
+                        Index = i + 2
+                    });
                 }
             }
-
-            //for (var i = 0; i < state.Length - 2; i++)
-            //{
-            //    var toApply = true;
-            //    foreach (var rule in rules)
-            //    {
-            //        toApply = true;
-            //        for (var j = 0; j < rule.Sequence.Length; j++)
-            //        {
-            //            try
-            //            {
-            //                if (state[j + i] != rule.Sequence[j])
-            //                {
-            //                    toApply = false;
-            //                    break;
-            //                }
-            //            }
-            //            catch (Exception e)
-            //            {
-            //                toApply = false;
-            //                break;
-            //            }
-            //        }
-            //        if (toApply)
-            //        {
-            //            result.Add(rule.Result);
-            //            break;
-            //        }
-            //    }
-            //    if (!toApply)
-            //    {
-            //        result.Add(0);
-            //    }
-            //}
-
             return result;
         }
 
