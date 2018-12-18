@@ -2,13 +2,13 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace Day16.csharp
 {
     class Program
     {
         private static readonly int[] _firstErrors = new []{157};
+
         static void Main(string[] args)
         {
             var input = System.IO.File.ReadAllLines("input.txt");
@@ -32,13 +32,15 @@ namespace Day16.csharp
                 }
             }
 
-            if (_firstErrors.Contains(result))
+            if (_firstErrors.Contains(result)) //over 500
             {
                 return;
             }
 
             Console.WriteLine(result);
             Console.ReadLine();
+
+            //result2 300 - 500
         }
     }
 
@@ -46,7 +48,7 @@ namespace Day16.csharp
     {
         public bool CanBeCalculatedByXOrMoreInstruction(int x, string before, string after, string @params)
         {
-            var device = new Device(4);
+            var device = new Device();
             var passedInstructions = new ConcurrentBag<Device.Instructions>();
             var registerBefore = before.Split(new[] {' ', ','}, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
             var registerAfter = after.Split(new[] {' ', ','}, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
@@ -90,11 +92,11 @@ namespace Day16.csharp
             Eqrr,
         }
 
-        private Dictionary<Instructions, Action<int, int, int>> _instructions;
+        private readonly Dictionary<Instructions, Action<int, int, int>> _instructions;
 
-        public Device(int registerSize)
+        public Device()
         {
-            Registers = new int[registerSize];
+            Registers = new int[4];
 
             _instructions = new Dictionary<Instructions, Action<int, int, int>>(16)
             {
@@ -102,15 +104,15 @@ namespace Day16.csharp
                 {Instructions.Addi, (a, b, c) => Registers[c] = Registers[a] + b},
                 {Instructions.Mulr, (a, b, c) => Registers[c] = Registers[a] * Registers[b]},
                 {Instructions.Muli, (a, b, c) => Registers[c] = Registers[a] * b},
-                {Instructions.Banr, (a, b, c) => Registers[c] = Registers[a] | Registers[b]},
-                {Instructions.Bani, (a, b, c) => Registers[c] = Registers[a] | b},
-                {Instructions.Borr, (a, b, c) => Registers[c] = Registers[a] & Registers[b]},
-                {Instructions.Bori, (a, b, c) => Registers[c] = Registers[a] & b},
+                {Instructions.Banr, (a, b, c) => Registers[c] = Registers[a] & Registers[b]},
+                {Instructions.Bani, (a, b, c) => Registers[c] = Registers[a] & b},
+                {Instructions.Borr, (a, b, c) => Registers[c] = Registers[a] | Registers[b]},
+                {Instructions.Bori, (a, b, c) => Registers[c] = Registers[a] | b},
                 {Instructions.Setr, (a, b, c) => Registers[c] = Registers[a]},
                 {Instructions.Seti, (a, b, c) => Registers[c] = a},
                 {Instructions.Gtir, (a, b, c) =>
                 {
-                    if (a > b)
+                    if (a > Registers[b])
                     {
                         Registers[c] = 1;
                     }
@@ -179,7 +181,14 @@ namespace Day16.csharp
 
         public void Run(Instructions instruction, int a, int b, int c)
         {
-            _instructions[instruction](a, b, c);
+            try
+            {
+                _instructions[instruction](a, b, c);
+            }
+            catch (IndexOutOfRangeException e)
+            {
+                return;
+            }
         }
     }
 }
