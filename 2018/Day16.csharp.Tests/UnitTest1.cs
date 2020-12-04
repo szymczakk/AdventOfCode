@@ -30,7 +30,7 @@ namespace Day16.csharp.Tests
         {
             var w = new W();
 
-            Assert.IsTrue(w.CanBeCalculatedByXOrMoreInstruction(3, "3, 2, 1, 1", "3, 2, 13, 1", "9 2 13 2"));
+            Assert.IsTrue(w.CanBeCalculatedByXOrMoreInstruction(3, "3, 2, 1, 1", "3, 2, 14, 1", "9 2 14 2"));
         }
 
         [TestMethod]

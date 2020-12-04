@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Day16.csharp
@@ -58,6 +59,7 @@ namespace Day16.csharp
             {
                 Array.Copy(registerBefore, device.Registers, registerBefore.Length);
                 device.Run(instruction, actionParams[1], actionParams[2], actionParams[3]);
+                Debug.WriteLine(instruction + ": " + string.Join(" ",device.Registers));
                 if (device.Registers.SequenceEqual(registerAfter))
                 {
                     passedInstructions.Add(instruction);
