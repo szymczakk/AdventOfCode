@@ -14,6 +14,6 @@ public class TestBase
 
     private static async Task<string[]> Load(string path)
     {
-        return await System.IO.File.ReadAllLinesAsync(path);
+        return await File.ReadAllLinesAsync(path);
     }
 }
