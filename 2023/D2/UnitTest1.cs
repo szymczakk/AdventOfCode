@@ -49,26 +49,21 @@ public static class D2
 {
     public static int Task1(IEnumerable<string> input)
     {
-        var result = 0;
-        foreach (var line in input)
-        {
-            var game = new Game(line);
-            if (game.IsGameValid(12, 13, 14))
+        return input.Select(x => new Game(x))
+            .Aggregate(0, (i, game) =>
             {
-                result += game.Id;
-            }
-        }
-        return result;
+                if (game.IsGameValid(12, 13, 14))
+                {
+                    return i + game.Id;
+                }
+                return i;
+            });
     }
 
     public static int Task2(IEnumerable<string> input)
     {
-        var result = 0;
-        foreach (var line in input)
-        {
-            var game = new Game(line);
-            result += game.MinCubeSetPow();
-        }
+        var result = input.Select(x => new Game(x))
+            .Aggregate(0, (x, y) => x + y.MinCubeSetPow());
         return result;
     }
 }
