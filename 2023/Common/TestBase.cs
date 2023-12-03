@@ -1,7 +1,17 @@
+using Xunit.Abstractions;
+
 namespace Common;
 
 public class TestBase
 {
+    protected readonly ITestOutputHelper _outputHelper;
+
+    public TestBase(ITestOutputHelper outputHelper)
+    {
+        _outputHelper = outputHelper;
+
+    }
+    
     public Task<string[]> LoadFile(string path = "./input.txt")
     {
         return Load(path);

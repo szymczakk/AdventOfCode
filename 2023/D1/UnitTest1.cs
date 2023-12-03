@@ -5,11 +5,8 @@ namespace D1;
 
 public class UnitTest1 : TestBase
 {
-    private readonly ITestOutputHelper _outputHelper;
-
-    public UnitTest1(ITestOutputHelper outputHelper)
+    public UnitTest1(ITestOutputHelper outputHelper): base(outputHelper)
     {
-        _outputHelper = outputHelper;
     }
 
     [Fact]
