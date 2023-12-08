@@ -13,7 +13,7 @@ public class UnitTest1 : TestBase
     public async void Test1()
     {
         var input = await LoadTestFile();
-        var result = D5.Task1(input);
+        var result = D6.Task1(input);
         Assert.Equal(288, result);
     }
 
@@ -21,13 +21,30 @@ public class UnitTest1 : TestBase
     public async void RealTest()
     {
         var input = await LoadFile();
-        var result = D5.Task1(input);
+        var result = D6.Task1(input);
         _outputHelper.WriteLine(result.ToString());
         Assert.Equal(440000, result);
     }
+
+    [Fact]
+    public async void Test2()
+    {
+        var input = await LoadTestFile();
+        var result = D6.Task2(input);
+        Assert.Equal(71503, result);
+    }
+
+    [Fact]
+    public async void RealTest2()
+    {
+        var input = await LoadFile();
+        var result = D6.Task2(input);
+        _outputHelper.WriteLine(result.ToString());
+        Assert.Equal(26187338, result);
+    }
 }
 
-public static class D5
+public static class D6
 {
     public static int Task1(string[] input)
     {
@@ -72,12 +89,48 @@ public static class D5
 
         return result;
     }
+
+    public static int Task2(string[] input)
+    {
+        var time = input[0].Split(" ")
+            .Select(x => x.Trim())
+            .Where(x => !string.IsNullOrEmpty(x))
+            .Skip(1)
+            .Aggregate(string.Empty, (s, s1) => s + s1);
+
+        var distance = input[1].Split(" ")
+            .Select(x => x.Trim())
+            .Where(x => !string.IsNullOrEmpty(x))
+            .Skip(1)
+            .Aggregate(string.Empty, (s, s1) => s + s1);
+
+        var race = new Race
+        {
+            Time = double.Parse(time),
+            RecordDistance = double.Parse(distance)
+        };
+
+
+        for (var i = 0; i <= race.Time; i++)
+        {
+            var boat = new Boat
+            {
+                Speed = i
+            };
+
+            if (boat.GetDistance(race.Time - i) > race.RecordDistance)
+            {
+                race.WinningBoats.Add(boat);
+            }
+        }
+        return race.WinningBoats.Count;
+    }
 }
 
 public class Race
 {
-    public int Time { get; set; }
-    public int RecordDistance { get; set; }
+    public double Time { get; set; }
+    public double RecordDistance { get; set; }
 
     public IList<Boat> WinningBoats { get; set; } = new List<Boat>();
 }
@@ -86,7 +139,7 @@ public class Boat
 {
     public int Speed { get; set; }
 
-    public int GetDistance(int time)
+    public double GetDistance(double time)
     {
         return Speed * time;
     }
