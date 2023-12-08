@@ -26,4 +26,13 @@
         <ProjectReference Include="..\Common\Common.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <None Update="input.txt">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="test-input.txt">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
 </Project>
